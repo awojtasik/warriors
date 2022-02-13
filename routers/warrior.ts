@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { WarriorRecord } from '../records/warrior.rcord';
+import { ValidationError } from '../utils/errors';
 
 export const warriorRouter = Router();
 
@@ -8,14 +9,23 @@ warriorRouter
     res.render('warrior/add-form');
   })
   .post('/', async (req, res) => {
+    const { power, defence, stamina, agility, name } = req.body;
+
+    // if (await WarriorRecord.isNameTaken(name)) {
+    //   throw new ValidationError(`Imię ${name} jest zajęte. Wybierz inne imię.`);
+    // }
+
     const warrior = new WarriorRecord({
       ...req.body,
-      power: Number(req.body.power),
-      defence: Number(req.body.defence),
-      stamina: Number(req.body.stamina),
-      agility: Number(req.body.agility),
+      power: Number(power),
+      defence: Number(defence),
+      stamina: Number(stamina),
+      agility: Number(agility),
     });
-    await warrior.insert();
-    res.render('warrior/warrior-added');
+    const id = await warrior.insert();
+
+    res.render('warrior/warrior-added', {
+      id,
+      name: warrior.name,
+    });
   });
-// http://localhost:3000/warrior/add-form
