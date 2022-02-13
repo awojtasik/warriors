@@ -64,18 +64,22 @@ export class WarriorRecord {
     return this.id;
   }
   async update(): Promise<void> {
-    await pool.execute('Update `warriors` SET `wins` =: wins', {
-      wins: this.wins,
-    });
+    await pool.execute(
+      'Update `warriors` SET `wins` = :wins WHERE `id` = :id',
+      {
+        id: this.id,
+        wins: this.wins,
+      }
+    );
   }
   static async getOne(id: string): Promise<WarriorRecord | null> {
     const [results] = (await pool.execute(
-      'SELECT * FROM `warriors` WHERE `id` =: id',
+      'SELECT * FROM `warriors` WHERE `id` = :id',
       {
         id,
       }
     )) as WarriorRecordResults;
-    return results.length === 0 ? null : results[0];
+    return results.length === 0 ? null : new WarriorRecord(results[0]);
   }
 
   static async listAll(): Promise<WarriorRecord[]> {
@@ -93,13 +97,13 @@ export class WarriorRecord {
     )) as WarriorRecordResults;
     return results.map((obj) => new WarriorRecord(obj));
   }
-  //   static async isNameTaken(name: string): Promise<boolean> {
-  //     const [results] = (await pool.execute(
-  //       'SELECT * FROM `warriors` WHERE `name` =: name',
-  //       {
-  //         name,
-  //       }
-  //     )) as WarriorRecordResults;
-  //     return results.length > 0;
-  //   }
+  static async isNameTaken(name: string): Promise<boolean> {
+    const [results] = (await pool.execute(
+      'SELECT * FROM `warriors` WHERE `name` = :name',
+      {
+        name,
+      }
+    )) as WarriorRecordResults;
+    return results.length > 0;
+  }
 }

@@ -14,7 +14,6 @@ export const handleError = (
     message:
       err instanceof ValidationError
         ? err.message
-        : `Imię ${req.body.name} jest zajęte. Wybierz inne imię.`,
-    // 'Przepraszamy spróbuj ponownie.'
+        : 'Przepraszamy spróbuj ponownie.',
   });
 };

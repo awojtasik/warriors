@@ -11,9 +11,9 @@ warriorRouter
   .post('/', async (req, res) => {
     const { power, defence, stamina, agility, name } = req.body;
 
-    // if (await WarriorRecord.isNameTaken(name)) {
-    //   throw new ValidationError(`Imię ${name} jest zajęte. Wybierz inne imię.`);
-    // }
+    if (await WarriorRecord.isNameTaken(name)) {
+      throw new ValidationError(`Imię ${name} jest zajęte. Wybierz inne imię.`);
+    }
 
     const warrior = new WarriorRecord({
       ...req.body,
